@@ -32,16 +32,15 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
-
-		Label Label => Element as Label;
-
-		NativeLabel Control => this as NativeLabel;
-
-		public VisualElement Element { get; private set; }
+		public Label Element { get; private set; }
 
 		public NativeView NativeView => this;
 
 		NativeViewController IVisualElementRenderer.ViewController => null;
+
+		VisualElement IVisualElementRenderer.Element => Element;
+
+		public NativeLabel Control => this as NativeLabel;
 
 
 		public LabelRenderer() : base()
@@ -53,7 +52,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		void IVisualElementRenderer.SetElement(VisualElement element)
 		{
 			var oldElement = Element;
-			Element = element;
+			Element = element as Label;
 
 			if (oldElement != null)
 				oldElement.PropertyChanged -= OnElementPropertyChanged;
@@ -104,14 +103,14 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 			var tinyWidth = Math.Min(10, result.Request.Width);
 			result.Minimum = new Size(tinyWidth, result.Request.Height);
 
-			if (widthFits || Label.LineBreakMode == Xamarin.Forms.LineBreakMode.NoWrap)
+			if (widthFits || Element.LineBreakMode == Xamarin.Forms.LineBreakMode.NoWrap)
 				return result;
 
 			bool containerIsNotInfinitelyWide = !double.IsInfinity(widthConstraint);
 
 			if (containerIsNotInfinitelyWide)
 			{
-				bool textCouldHaveWrapped = Label.LineBreakMode == Xamarin.Forms.LineBreakMode.WordWrap || Label.LineBreakMode == Xamarin.Forms.LineBreakMode.CharacterWrap;
+				bool textCouldHaveWrapped = Element.LineBreakMode == Xamarin.Forms.LineBreakMode.WordWrap || Element.LineBreakMode == Xamarin.Forms.LineBreakMode.CharacterWrap;
 				bool textExceedsContainer = result.Request.Width > widthConstraint;
 
 				if (textExceedsContainer || textCouldHaveWrapped)
@@ -135,28 +134,35 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 					base.Layout();
 #endif
 
+		}
 
-			SizeF fitSize = Control.SizeThatFits(Element.Bounds.Size.ToSizeF());
-			nfloat labelHeight = (nfloat)Math.Min(Bounds.Height, fitSize.Height);
-			switch (Label.VerticalTextAlignment)
+
+		public override void DrawText(RectangleF rect)
+		{
+			SizeF fitSize = SizeThatFits(Element.Bounds.Size.ToSizeF());
+			var labelHeight = (nfloat)Math.Min(Element.Height, fitSize.Height);
+
+			switch (Element.VerticalTextAlignment)
 			{
 				case Xamarin.Forms.TextAlignment.Start:
-					//fitSize = Control.SizeThatFits(Element.Bounds.Size.ToSizeF());
-					//labelHeight = (nfloat)Math.Min(Bounds.Height, fitSize.Height);
-					Control.Frame = new RectangleF(Element.X, Element.Y, (nfloat)Element.Width, labelHeight);
+					rect.Height = labelHeight;
 					break;
-				case Xamarin.Forms.TextAlignment.Center:
-					Control.Frame = new RectangleF(Element.X, Element.Y + (Element.Bounds.Height - labelHeight) / 2, (nfloat)Element.Width, (nfloat)Element.Height);
-					break;
+
+				//case Xamarin.Forms.TextAlignment.Center:
+				//rect.Y = ((nfloat)Element.Height - labelHeight) / 2;
+				////rect.Height = labelHeight;
+				//break;
+
 				case Xamarin.Forms.TextAlignment.End:
-					nfloat yOffset = 0;
-					//fitSize = Control.SizeThatFits(Element.Bounds.Size.ToSizeF());
-					//labelHeight = (nfloat)Math.Min(Bounds.Height, fitSize.Height);
-					yOffset = (nfloat)(Element.Height - labelHeight);
-					Control.Frame = new RectangleF(Element.X, Element.Y + yOffset, (nfloat)Element.Width, labelHeight);
+					nfloat yOffset = (nfloat)Element.Height - labelHeight;
+					rect.Y = yOffset;
+					rect.Height = labelHeight;
 					break;
 			}
+
+			base.DrawText(rect);
 		}
+
 
 		protected virtual void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
@@ -180,7 +186,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		void UpdateAlignment()
 		{
 #if __MOBILE__
-			Control.TextAlignment = Label.HorizontalTextAlignment.ToNativeTextAlignment();
+			Control.TextAlignment = Element.HorizontalTextAlignment.ToNativeTextAlignment();
 #else
 					Control.Alignment = Element.HorizontalTextAlignment.ToNativeTextAlignment();
 #endif
@@ -190,7 +196,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		{
 			_perfectSizeValid = false;
 #if __MOBILE__
-			switch (Label.LineBreakMode)
+			switch (Element.LineBreakMode)
 			{
 				case Xamarin.Forms.LineBreakMode.NoWrap:
 					Control.LineBreakMode = UILineBreakMode.Clip;
@@ -218,7 +224,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 					break;
 			}
 #else
-					switch (Label.LineBreakMode)
+					switch (Element.LineBreakMode)
 					{
 						case Xamarin.Forms.LineBreakMode.NoWrap:
 							Control.LineBreakMode = NSLineBreakMode.Clipping;
@@ -263,7 +269,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 			{
 				Control.Text = (string)values[1];
 				// default value of color documented to be black in iOS docs
-				Control.Font = Label.ToUIFont();
+				Control.Font = Element.ToUIFont();
 				Control.TextColor = ((Color)values[2]).ToUIColor(ColorExtensions.Black);
 			}
 #else
@@ -273,7 +279,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 					{
 						Control.StringValue = (string)values[1] ?? "";
 						// default value of color documented to be black in iOS docs
-						Control.Font = Label.ToNSFont();
+						Control.Font = Element.ToNSFont();
 						Control.TextColor = ((Color)values[2]).ToNSColor(ColorExtensions.Black);
 					}
 #endif
