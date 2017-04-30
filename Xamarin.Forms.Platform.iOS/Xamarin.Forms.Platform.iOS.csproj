@@ -156,6 +156,7 @@
     <Compile Include="FastRenderers\LabelRenderer.cs" />
     <Compile Include="FastRenderers\EffectControlProvider.cs" />
     <Compile Include="FastRenderers\AccessibilityProvider.cs" />
+    <Compile Include="FastRenderers\ImageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\StringResources.ar.resx" />
