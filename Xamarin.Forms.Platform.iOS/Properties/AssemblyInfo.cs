@@ -20,7 +20,8 @@ using UIKit;
 
 [assembly: ExportRenderer(typeof(BoxView), typeof(BoxRenderer))]
 [assembly: ExportRenderer(typeof(Entry), typeof(EntryRenderer))]
-[assembly: ExportRenderer(typeof(Editor), typeof(EditorRenderer))]
+[assembly: ExportRenderer(typeof(Editor), typeof(Xamarin.Forms.Platform.iOS.FastRenderers.EditorRenderer))]
+//[assembly: ExportRenderer(typeof(Editor), typeof(EditorRenderer))]
 [assembly: ExportRenderer(typeof(Label), typeof(Xamarin.Forms.Platform.iOS.FastRenderers.LabelRenderer))]
 //[assembly: ExportRenderer(typeof(Label), typeof(LabelRenderer))]
 [assembly: ExportRenderer(typeof(Image), typeof(Xamarin.Forms.Platform.iOS.FastRenderers.ImageRenderer))]
