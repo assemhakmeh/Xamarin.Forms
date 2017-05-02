@@ -58,6 +58,8 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 
 			if (disposing)
 			{
+				_visualElementRendererBridge?.Dispose();
+
 				UIImage oldUIImage;
 				if (Control != null && (oldUIImage = Control.Image) != null)
 				{
@@ -221,6 +223,7 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 			}
 
 			Control.Opaque = Element.IsOpaque;
+			Control.ClearsContextBeforeDrawing = !Control.Opaque;
 		}
 	}
 

@@ -48,6 +48,17 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 			_visualElementRendererBridge = new VisualElementRendererBridge(this);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_visualElementRendererBridge?.Dispose();
+			}
+
+			base.Dispose(disposing);
+		}
+
+
 
 		void IVisualElementRenderer.SetElement(VisualElement element)
 		{
