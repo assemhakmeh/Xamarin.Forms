@@ -217,6 +217,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				caLayer.AnchorPoint = new PointF(anchorX - 0.5f, anchorY - 0.5f);
 #endif
 				caLayer.Opacity = opacity;
+				uiview.ClearsContextBeforeDrawing = opacity < 1;
 				const double epsilon = 0.001;
 
 				// position is relative to anchor point

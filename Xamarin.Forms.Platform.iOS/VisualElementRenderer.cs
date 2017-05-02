@@ -62,6 +62,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			WantsLayer = true;
 			Layer.BackgroundColor = _defaultColor.CGColor;
 #endif
+			ClearsContextBeforeDrawing = false;
 		}
 
 #if __MOBILE__
