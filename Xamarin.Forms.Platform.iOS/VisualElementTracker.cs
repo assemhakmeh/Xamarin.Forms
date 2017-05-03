@@ -77,6 +77,10 @@ namespace Xamarin.Forms.Platform.MacOS
 
 		void HandlePropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
+			//Optimize the return of this call as quickly as possible
+			if (Renderer.Element == null || Renderer.Element.Batched)
+				return; 
+
 			if (e.PropertyName == VisualElement.XProperty.PropertyName || e.PropertyName == VisualElement.YProperty.PropertyName || e.PropertyName == VisualElement.WidthProperty.PropertyName ||
 				e.PropertyName == VisualElement.HeightProperty.PropertyName || e.PropertyName == VisualElement.AnchorXProperty.PropertyName || e.PropertyName == VisualElement.AnchorYProperty.PropertyName ||
 				e.PropertyName == VisualElement.TranslationXProperty.PropertyName || e.PropertyName == VisualElement.TranslationYProperty.PropertyName || e.PropertyName == VisualElement.ScaleProperty.PropertyName ||
@@ -280,6 +284,9 @@ namespace Xamarin.Forms.Platform.MacOS
 		void UpdateNativeControl()
 		{
 			if (_disposed)
+				return;
+
+			if (Renderer.Element == null || Renderer.Element.Batched)
 				return;
 
 			if (_layer == null)
