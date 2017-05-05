@@ -56,6 +56,8 @@ namespace Xamarin.Forms.Platform.iOS
 
 			public ViewTableCell(string key) : base(UITableViewCellStyle.Default, key)
 			{
+				ClearsContextBeforeDrawing = false;
+				ContentView.ClearsContextBeforeDrawing = false;
 			}
 
 			public ViewCell ViewCell

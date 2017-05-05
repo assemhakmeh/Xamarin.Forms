@@ -46,10 +46,14 @@ namespace Xamarin.Forms.Platform.iOS
 
 		public ContextActionsCell() : base(UITableViewCellStyle.Default, Key)
 		{
+			ClearsContextBeforeDrawing = false;
+			ContentView.ClearsContextBeforeDrawing = false;
 		}
 
 		public ContextActionsCell(string templateId) : base(UITableViewCellStyle.Default, Key + templateId)
 		{
+			ClearsContextBeforeDrawing = false;
+			ContentView.ClearsContextBeforeDrawing = false;
 		}
 
 		public UITableViewCell ContentCell { get; private set; }
@@ -170,7 +174,8 @@ namespace Xamarin.Forms.Platform.iOS
 				_scroller = new UIScrollView(new RectangleF(0, 0, width, height));
 				_scroller.ScrollsToTop = false;
 				_scroller.ShowsHorizontalScrollIndicator = false;
-				
+				_scroller.ClearsContextBeforeDrawing = false;
+
 				_scroller.PreservesSuperviewLayoutMargins = true;
 
 				ContentView.AddSubview(_scroller);
