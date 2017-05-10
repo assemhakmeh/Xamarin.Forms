@@ -272,7 +272,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		{
 			if (_blur != null && Control.Superview != null)
 			{
-				_blur.Frame = Control.Bounds;
+				_blur.Frame = Control.Frame;
 				if (_blur.Superview == null)
 					Control.Superview.Add(_blur);
 			}
