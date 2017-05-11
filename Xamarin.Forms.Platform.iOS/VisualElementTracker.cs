@@ -245,8 +245,11 @@ namespace Xamarin.Forms.Platform.MacOS
 				if (Math.Abs(rotationY % 360) > epsilon)
 					transform = transform.Rotate(rotationY * (float)Math.PI / 180.0f, 0.0f, 1.0f, 0.0f);
 
-				transform = transform.Rotate(rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
-				caLayer.Transform = transform;
+				if (Math.Abs(rotation % 360) > epsilon)
+					transform = transform.Rotate(rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
+
+				if (!transform.IsIdentity)
+					caLayer.Transform = transform;
 			};
 
 			if (thread)
