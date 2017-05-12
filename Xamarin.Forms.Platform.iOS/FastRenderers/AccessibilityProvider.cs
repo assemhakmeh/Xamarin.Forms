@@ -89,11 +89,11 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 #if __MOBILE__
-			if (e.PropertyName == Accessibility.HintProperty.PropertyName)
+			if (e.PropertyName == AutomationProperties.HelpTextProperty.PropertyName)
 				SetAccessibilityHint();
-			else if (e.PropertyName == Accessibility.NameProperty.PropertyName)
+			else if (e.PropertyName == AutomationProperties.NameProperty.PropertyName)
 				SetAccessibilityLabel();
-			else if (e.PropertyName == Accessibility.IsInAccessibleTreeProperty.PropertyName)
+			else if (e.PropertyName == AutomationProperties.IsInAccessibleTreeProperty.PropertyName)
 				SetIsAccessibilityElement();
 #endif
 		}
@@ -112,7 +112,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 			if (_defaultAccessibilityHint == null)
 				_defaultAccessibilityHint = Control.AccessibilityHint;
 
-			Control.AccessibilityHint = (string)Element.GetValue(Accessibility.HintProperty) ?? _defaultAccessibilityHint;
+			Control.AccessibilityHint = (string)Element.GetValue(AutomationProperties.HelpTextProperty) ?? _defaultAccessibilityHint;
 		}
 
 		void SetAccessibilityLabel()
@@ -123,7 +123,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 			if (_defaultAccessibilityLabel == null)
 				_defaultAccessibilityLabel = Control.AccessibilityLabel;
 
-			Control.AccessibilityLabel = (string)Element.GetValue(Accessibility.NameProperty) ?? _defaultAccessibilityLabel;
+			Control.AccessibilityLabel = (string)Element.GetValue(AutomationProperties.NameProperty) ?? _defaultAccessibilityLabel;
 		}
 
 		void SetIsAccessibilityElement()
@@ -134,7 +134,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 			if (!_defaultIsAccessibilityElement.HasValue)
 				_defaultIsAccessibilityElement = Control.IsAccessibilityElement;
 
-			Control.IsAccessibilityElement = (bool)((bool?)Element.GetValue(Accessibility.IsInAccessibleTreeProperty) ?? _defaultIsAccessibilityElement);
+			Control.IsAccessibilityElement = (bool)((bool?)Element.GetValue(AutomationProperties.IsInAccessibleTreeProperty) ?? _defaultIsAccessibilityElement);
 		}
 #endif
 

@@ -95,6 +95,11 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 					_renderer.ElementChanged -= OnElementChanged;
 					_renderer = null;
 				}
+
+				if (Element != null)
+				{
+					Platform.SetRenderer(Element, null);
+				}
 			}
 		}
 
