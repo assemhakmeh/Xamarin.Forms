@@ -79,7 +79,7 @@ namespace Xamarin.Forms.Platform.MacOS
 		{
 			//Optimize the return of this call as quickly as possible
 			if (Renderer.Element == null || Renderer.Element.Batched)
-				return; 
+				return;
 
 			if (e.PropertyName == VisualElement.XProperty.PropertyName || e.PropertyName == VisualElement.YProperty.PropertyName || e.PropertyName == VisualElement.WidthProperty.PropertyName ||
 				e.PropertyName == VisualElement.HeightProperty.PropertyName || e.PropertyName == VisualElement.AnchorXProperty.PropertyName || e.PropertyName == VisualElement.AnchorYProperty.PropertyName ||
@@ -249,8 +249,7 @@ namespace Xamarin.Forms.Platform.MacOS
 				if (Math.Abs(rotation % 360) > epsilon)
 					transform = transform.Rotate(rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
 
-				if (!transform.IsIdentity)
-					caLayer.Transform = transform;
+				caLayer.Transform = transform;
 			};
 
 			if (thread)
