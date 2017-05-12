@@ -54,6 +54,7 @@ namespace Xamarin.Forms.Platform.iOS
 				UIApplication.CheckForIllegalCrossThreadCalls = false;
 
 				CATransaction.Begin();
+				CATransaction.DisableActions = true;
 				action.Invoke();
 
 				while (_queue.TryTake(out action))
