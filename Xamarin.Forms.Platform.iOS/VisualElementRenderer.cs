@@ -252,9 +252,13 @@ namespace Xamarin.Forms.Platform.MacOS
 					_packager = null;
 				}
 
-				Platform.SetRenderer(Element, null);
-				SetElement(null);
-				Element = null;
+				// The ListView can create renderers and unhook them from the Element before Dispose is called.
+				// Thus, it is possible that this work is already completed.
+				if (Element != null)
+				{
+					Platform.SetRenderer(Element, null);
+					SetElement(null);
+				}
 			}
 			base.Dispose(disposing);
 		}
@@ -281,11 +285,11 @@ namespace Xamarin.Forms.Platform.MacOS
 #if __MOBILE__
 			else if (e.PropertyName == PlatformConfiguration.iOSSpecific.VisualElement.BlurEffectProperty.PropertyName)
 				SetBlur((BlurEffectStyle)Element.GetValue(PlatformConfiguration.iOSSpecific.VisualElement.BlurEffectProperty));
-			else if (e.PropertyName == Accessibility.HintProperty.PropertyName)
+			else if (e.PropertyName == AutomationProperties.HelpTextProperty.PropertyName)
 				SetAccessibilityHint();
-			else if (e.PropertyName == Accessibility.NameProperty.PropertyName)
+			else if (e.PropertyName == AutomationProperties.NameProperty.PropertyName)
 				SetAccessibilityLabel();
-			else if (e.PropertyName == Accessibility.IsInAccessibleTreeProperty.PropertyName)
+			else if (e.PropertyName == AutomationProperties.IsInAccessibleTreeProperty.PropertyName)
 				SetIsAccessibilityElement();
 #endif
 		}
@@ -304,7 +308,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			if (_defaultAccessibilityHint == null)
 				_defaultAccessibilityHint = AccessibilityHint;
 
-			AccessibilityHint = (string)Element.GetValue(Accessibility.HintProperty) ?? _defaultAccessibilityHint;
+			AccessibilityHint = (string)Element.GetValue(AutomationProperties.HelpTextProperty) ?? _defaultAccessibilityHint;
 		}
 
 		protected virtual void SetAccessibilityLabel()
@@ -315,7 +319,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			if (_defaultAccessibilityLabel == null)
 				_defaultAccessibilityLabel = AccessibilityLabel;
 
-			AccessibilityLabel = (string)Element.GetValue(Accessibility.NameProperty) ?? _defaultAccessibilityLabel;
+			AccessibilityLabel = (string)Element.GetValue(AutomationProperties.NameProperty) ?? _defaultAccessibilityLabel;
 		}
 
 		protected virtual void SetIsAccessibilityElement()
@@ -326,7 +330,7 @@ namespace Xamarin.Forms.Platform.MacOS
 			if (!_defaultIsAccessibilityElement.HasValue)
 				_defaultIsAccessibilityElement = IsAccessibilityElement;
 
-			IsAccessibilityElement = (bool)((bool?)Element.GetValue(Accessibility.IsInAccessibleTreeProperty) ?? _defaultIsAccessibilityElement);
+			IsAccessibilityElement = (bool)((bool?)Element.GetValue(AutomationProperties.IsInAccessibleTreeProperty) ?? _defaultIsAccessibilityElement);
 		}
 #endif
 		protected virtual void SetAutomationId(string id)
