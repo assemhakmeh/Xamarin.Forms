@@ -221,35 +221,63 @@ namespace Xamarin.Forms.Platform.MacOS
 				caLayer.AnchorPoint = new PointF(anchorX - 0.5f, anchorY - 0.5f);
 #endif
 				caLayer.Opacity = opacity;
-				caLayer.DrawsAsynchronously = true;
-				uiview.ClearsContextBeforeDrawing = opacity < 1;
 				const double epsilon = 0.001;
+				var transformed = false;
 
 				// position is relative to anchor point
 				if (Math.Abs(anchorX - .5) > epsilon)
+				{
 					transform = transform.Translate((anchorX - .5f) * width, 0, 0);
-				if (Math.Abs(anchorY - .5) > epsilon)
-					transform = transform.Translate(0, (anchorY - .5f) * height, 0);
+					transformed = true;
+				}
 
+				if (Math.Abs(anchorY - .5) > epsilon)
+				{
+					transform = transform.Translate(0, (anchorY - .5f) * height, 0);
+					transformed = true;
+				}
 				if (Math.Abs(translationX) > epsilon || Math.Abs(translationY) > epsilon)
+				{
 					transform = transform.Translate(translationX, translationY, 0);
+					transformed = true;
+				}
 
 				if (Math.Abs(scale - 1) > epsilon)
+				{
 					transform = transform.Scale(scale);
+					transformed = true;
+				}
 
 				// not just an optimization, iOS will not "pixel align" a view which has m34 set
 				if (Math.Abs(rotationY % 180) > epsilon || Math.Abs(rotationX % 180) > epsilon)
+				{
 					transform.m34 = 1.0f / -400f;
+					transformed = true;
+				}
 
 				if (Math.Abs(rotationX % 360) > epsilon)
+				{
 					transform = transform.Rotate(rotationX * (float)Math.PI / 180.0f, 1.0f, 0.0f, 0.0f);
+					transformed = true;
+				}
 				if (Math.Abs(rotationY % 360) > epsilon)
+				{
 					transform = transform.Rotate(rotationY * (float)Math.PI / 180.0f, 0.0f, 1.0f, 0.0f);
+					transformed = true;
+				}
 
 				if (Math.Abs(rotation % 360) > epsilon)
+				{
 					transform = transform.Rotate(rotation * (float)Math.PI / 180.0f, 0.0f, 0.0f, 1.0f);
+					transformed = true;
+				}
 
 				caLayer.Transform = transform;
+
+				if (transformed)
+					caLayer.DrawsAsynchronously = true;
+				else
+					caLayer.DrawsAsynchronously = false;
 			};
 
 			if (thread)
