@@ -255,8 +255,12 @@ namespace Xamarin.Forms.Platform.MacOS
 			if (thread)
 				CADisplayLinkTicker.Default.Invoke(update);
 			else
+			{
+				CATransaction.Begin();
+				CATransaction.DisableActions = true;
 				update();
-
+				CATransaction.Commit();
+			}
 			_lastBounds = view.Bounds;
 #if !__MOBILE__
 			_lastParentBounds = viewParent?.Bounds ?? Rectangle.Zero;
@@ -287,9 +291,6 @@ namespace Xamarin.Forms.Platform.MacOS
 		void UpdateNativeControl()
 		{
 			if (_disposed)
-				return;
-
-			if (Renderer.Element == null || Renderer.Element.Batched)
 				return;
 
 			if (_layer == null)
