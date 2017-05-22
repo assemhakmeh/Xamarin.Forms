@@ -28,6 +28,10 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 
 		bool _perfectSizeValid;
 
+		RectangleF _textRect = RectangleF.Empty;
+
+		bool _textFits = false;
+
 		readonly VisualElementRendererBridge _visualElementRendererBridge;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
@@ -145,33 +149,37 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 					base.Layout();
 #endif
 
+
+			SizeF fitSize;
+			nfloat labelHeight;
+			switch (Element.VerticalTextAlignment)
+			{
+				case Xamarin.Forms.TextAlignment.Start:
+					fitSize = Control.SizeThatFits(Element.Bounds.Size.ToSizeF());
+					labelHeight = (nfloat)Math.Min(Bounds.Height, fitSize.Height);
+					_textRect = new RectangleF(0, 0, (nfloat)Element.Width, labelHeight);
+					_textFits = fitSize.Height <= Bounds.Height;
+					break;
+				case Xamarin.Forms.TextAlignment.Center:
+					_textRect = new RectangleF(0, 0, (nfloat)Element.Width, (nfloat)Element.Height);
+					_textFits = false;
+					break;
+				case Xamarin.Forms.TextAlignment.End:
+					nfloat yOffset = 0;
+					fitSize = Control.SizeThatFits(Element.Bounds.Size.ToSizeF());
+					labelHeight = (nfloat)Math.Min(Bounds.Height, fitSize.Height);
+					yOffset = (nfloat)(Element.Height - labelHeight);
+					_textRect = new RectangleF(0, yOffset, (nfloat)Element.Width, labelHeight);
+					_textFits = fitSize.Height <= Bounds.Height;
+					break;
+			}
+
 		}
 
 
 		public override void DrawText(RectangleF rect)
 		{
-			SizeF fitSize = SizeThatFits(Element.Bounds.Size.ToSizeF());
-			var labelHeight = (nfloat)Math.Min(Element.Height, fitSize.Height);
-
-			switch (Element.VerticalTextAlignment)
-			{
-				case Xamarin.Forms.TextAlignment.Start:
-					rect.Height = labelHeight;
-					break;
-
-				//case Xamarin.Forms.TextAlignment.Center:
-				//rect.Y = ((nfloat)Element.Height - labelHeight) / 2;
-				////rect.Height = labelHeight;
-				//break;
-
-				case Xamarin.Forms.TextAlignment.End:
-					nfloat yOffset = (nfloat)Element.Height - labelHeight;
-					rect.Y = yOffset;
-					rect.Height = labelHeight;
-					break;
-			}
-
-			base.DrawText(rect);
+			base.DrawText(_textFits ? _textRect : rect);
 		}
 
 
