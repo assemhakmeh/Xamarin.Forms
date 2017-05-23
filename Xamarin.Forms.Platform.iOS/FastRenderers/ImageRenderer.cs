@@ -85,21 +85,9 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 				element.PropertyChanged += OnElementPropertyChanged;
 			}
 
+			OnElementChanged(this, new VisualElementChangedEventArgs(oldElement, element));
+
 			ElementChanged?.Invoke(this, new VisualElementChangedEventArgs(oldElement, element));
-
-			if (element != null)
-			{
-				if (Control == null)
-				{
-					Control.ContentMode = UIViewContentMode.ScaleAspectFit;
-					Control.ClipsToBounds = true;
-				}
-
-				SetAspect();
-				/* await */
-				TrySetImage(oldElement as Xamarin.Forms.Image).Wait();
-				SetOpacity();
-			}
 
 		}
 
@@ -120,7 +108,23 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 			_visualElementRendererBridge.LayoutSubviews();
 		}
 
-		async void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
+		protected virtual async void OnElementChanged(object sender, VisualElementChangedEventArgs e)
+		{
+			if (Control == null)
+			{
+				Control.ContentMode = UIViewContentMode.ScaleAspectFit;
+				Control.ClipsToBounds = true;
+			}
+
+			if (e.NewElement != null)
+			{
+				SetAspect();
+				await TrySetImage(e.OldElement as Xamarin.Forms.Image);
+				SetOpacity();
+			}
+		}
+
+		protected virtual async void OnElementPropertyChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == Xamarin.Forms.Image.SourceProperty.PropertyName)
 				await TrySetImage();
