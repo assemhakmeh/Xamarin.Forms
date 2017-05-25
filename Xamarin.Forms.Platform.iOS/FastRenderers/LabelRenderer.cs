@@ -32,7 +32,7 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 
 		bool _textFits = false;
 
-		readonly VisualElementRendererBridge _visualElementRendererBridge;
+		VisualElementRendererBridge _visualElementRendererBridge;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
@@ -56,7 +56,11 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		{
 			if (disposing)
 			{
-				_visualElementRendererBridge?.Dispose();
+				if (_visualElementRendererBridge != null)
+				{
+					_visualElementRendererBridge.Dispose();
+					_visualElementRendererBridge = null;
+				}
 			}
 
 			base.Dispose(disposing);

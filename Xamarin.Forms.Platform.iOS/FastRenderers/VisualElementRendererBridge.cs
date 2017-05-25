@@ -31,15 +31,13 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 		static readonly CGColor _defaultColor = NativeColor.Clear.CGColor;
 #endif
 
-		bool _disposed;
-
 		IVisualElementRenderer _renderer;
-		readonly AccessibilityProvider _accessibilityProvider;
-		readonly EffectControlProvider _effectControlProvider;
 
 		EventTracker _events;
 		VisualElementPackager _packager;
 		VisualElementTracker _tracker;
+		AccessibilityProvider _accessibilityProvider;
+		EffectControlProvider _effectControlProvider;
 
 		VisualElementRendererFlags _flags = VisualElementRendererFlags.AutoPackage | VisualElementRendererFlags.AutoTrack;
 
@@ -78,27 +76,53 @@ namespace Xamarin.Forms.Platform.MacOS.FastRenderers
 
 		void Dispose(bool disposing)
 		{
-			if (_disposed)
+			if ((_flags & VisualElementRendererFlags.Disposed) != 0)
 				return;
 
-			_disposed = true;
+			_flags |= VisualElementRendererFlags.Disposed;
 
 			if (disposing)
 			{
-				_events?.Dispose();
-				_tracker?.Dispose();
-				_packager?.Dispose();
-				_accessibilityProvider?.Dispose();
 
-				if (_renderer != null)
+				if (_events != null)
 				{
-					_renderer.ElementChanged -= OnElementChanged;
-					_renderer = null;
+					_events.Dispose();
+					_events = null;
+				}
+
+				if (_tracker != null)
+				{
+					_tracker.Dispose();
+					_tracker = null;
+				}
+
+				if (_packager != null)
+				{
+					_packager.Dispose();
+					_packager = null;
+				}
+
+				if (_accessibilityProvider != null)
+				{
+					_accessibilityProvider.Dispose();
+					_accessibilityProvider = null;
+				}
+
+				if (_effectControlProvider != null)
+				{
+					_effectControlProvider = null;
 				}
 
 				if (Element != null)
 				{
 					Platform.SetRenderer(Element, null);
+					_renderer?.SetElement(null);
+				}
+
+				if (_renderer != null)
+				{
+					_renderer.ElementChanged -= OnElementChanged;
+					_renderer = null;
 				}
 			}
 		}

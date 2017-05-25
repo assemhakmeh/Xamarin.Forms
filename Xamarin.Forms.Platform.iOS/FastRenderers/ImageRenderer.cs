@@ -31,7 +31,7 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 	{
 		bool _isDisposed;
 
-		readonly VisualElementRendererBridge _visualElementRendererBridge;
+		VisualElementRendererBridge _visualElementRendererBridge;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
@@ -58,7 +58,11 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 
 			if (disposing)
 			{
-				_visualElementRendererBridge?.Dispose();
+				if (_visualElementRendererBridge != null)
+				{
+					_visualElementRendererBridge.Dispose();
+					_visualElementRendererBridge = null;
+				}
 
 				UIImage oldUIImage;
 				if (Control != null && (oldUIImage = Control.Image) != null)

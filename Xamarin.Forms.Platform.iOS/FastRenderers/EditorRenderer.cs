@@ -11,7 +11,7 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 		bool _controlInitialized;
 		IEditorController ElementController => Element;
 
-		readonly VisualElementRendererBridge _visualElementRendererBridge;
+		VisualElementRendererBridge _visualElementRendererBridge;
 
 		public event EventHandler<VisualElementChangedEventArgs> ElementChanged;
 
@@ -41,6 +41,12 @@ namespace Xamarin.Forms.Platform.iOS.FastRenderers
 
 			if (disposing)
 			{
+				if (_visualElementRendererBridge != null)
+				{
+					_visualElementRendererBridge.Dispose();
+					_visualElementRendererBridge = null;
+				}
+
 				if (Control != null)
 				{
 					Control.Changed -= HandleChanged;
