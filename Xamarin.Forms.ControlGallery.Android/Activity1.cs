@@ -158,6 +158,8 @@ namespace Xamarin.Forms.ControlGallery.Android
 
 	public class Activity1 : FormsApplicationActivity
 	{
+		App _app;
+
 		protected override void OnCreate(Bundle bundle)
 		{
 			//ToolbarResource = Resource.Layout.Toolbar;
@@ -179,12 +181,12 @@ namespace Xamarin.Forms.ControlGallery.Android
 			// uncomment to verify turning off title bar works. This is not intended to be dynamic really.
 			//Forms.SetTitleBarVisibility (AndroidTitleBarVisibility.Never);
 
-			var app = new App ();
-
+			_app = new App ();
+			
 			// When the native control gallery loads up, it'll let us know so we can add the nested native controls
 			MessagingCenter.Subscribe<NestedNativeControlGalleryPage>(this, NestedNativeControlGalleryPage.ReadyForNativeControlsMessage, AddNativeControls);
 
-			LoadApplication (app);
+			LoadApplication (_app);
 		}
 
 		private void AddNativeControls (NestedNativeControlGalleryPage page)

@@ -847,24 +847,28 @@ namespace Xamarin.Forms.Platform.Android
 			Color navigationBarTextColor = CurrentNavigationPage == null ? Color.Default : CurrentNavigationPage.BarTextColor;
 			TextView actionBarTitleTextView = null;
 
-			if(Forms.IsLollipopOrNewer)
+			if (Forms.IsLollipopOrNewer)
 			{
 				int actionbarId = _context.Resources.GetIdentifier("action_bar", "id", "android");
-				if(actionbarId > 0)
+				if (actionbarId > 0)
 				{
-					Toolbar toolbar = (Toolbar)((Activity)_context).FindViewById(actionbarId);
-					
-					for( int i = 0; i < toolbar.ChildCount; i++ )
+					var toolbar = ((Activity)_context).FindViewById(actionbarId) as ViewGroup;
+					if (toolbar != null)
 					{
-						if( toolbar.GetChildAt(i) is TextView )
+						for (int i = 0; i < toolbar.ChildCount; i++)
 						{
-							actionBarTitleTextView = (TextView)toolbar.GetChildAt(i);
-							break;
+							var textView = toolbar.GetChildAt(i) as TextView;
+							if (textView != null)
+							{
+								actionBarTitleTextView = textView;
+								break;
+							}
 						}
 					}
 				}
-			}
-			else
+			}			
+
+			if (actionBarTitleTextView == null)
 			{
 				int actionBarTitleId = _context.Resources.GetIdentifier("action_bar_title", "id", "android");
 				if (actionBarTitleId > 0)
@@ -1030,6 +1034,23 @@ namespace Xamarin.Forms.Platform.Android
 					Forms.Context = context;
 			}
 		}
+
+		internal static int GenerateViewId()
+		{
+			// getting unique Id's is an art, and I consider myself the Jackson Pollock of the field
+			if ((int)Build.VERSION.SdkInt >= 17)
+				return global::Android.Views.View.GenerateViewId();
+
+			// Numbers higher than this range reserved for xml
+			// If we roll over, it can be exceptionally problematic for the user if they are still retaining things, android's internal implementation is
+			// basically identical to this except they do a lot of locking we don't have to because we know we only do this
+			// from the UI thread
+			if (s_id >= 0x00ffffff)
+				s_id = 0x00000400;
+			return s_id++;
+		}
+
+		static int s_id = 0x00000400;
 
 		internal class DefaultRenderer : VisualElementRenderer<View>
 		{

@@ -43,6 +43,11 @@ namespace Xamarin.Forms.Platform.Android
 			Page view = e.NewElement;
 			base.OnElementChanged(e);
 
+			if (Id == NoId)
+			{
+				Id = Platform.GenerateViewId();
+			}
+
 			UpdateBackgroundColor(view);
 			UpdateBackgroundImage(view);
 
